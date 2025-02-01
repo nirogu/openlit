@@ -1,6 +1,6 @@
 import { Pool } from "generic-pool";
 import { getDBConfigById, getDBConfigByUser } from "../db-config";
-import createClickhousePool from "./clickhouse-client";
+import createClickhousePool from "./clickhouse/clickhouse-client";
 import asaw from "@/utils/asaw";
 import {
 	ClickHouseClient,

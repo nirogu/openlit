@@ -1,4 +1,4 @@
-import { MetricParams, dataCollector, OTEL_TRACES_TABLE_NAME } from "./common";
+import { MetricParams, dataCollector, OTEL_TRACES_TABLE_NAME } from "../common";
 import { buildHierarchy, getTraceMappingKeyFullPath } from "@/helpers/trace";
 import {
 	dateTruncGroupingLogic,
