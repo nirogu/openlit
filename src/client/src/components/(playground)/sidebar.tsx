@@ -18,6 +18,7 @@ import {
 	KeyIcon,
 	LayoutDashboard,
 	MonitorPlay,
+	SettingsIcon,
 	ShieldAlert,
 	SquarePlay,
 } from "lucide-react";
@@ -66,14 +67,9 @@ const SIDEBAR_ITEMS: SidebarItemProps[] = [
 		link: "/openground",
 	},
 	{
-		icon: <DatabaseBackup className={ICON_CLASSES} />,
-		text: "Databases",
-		link: "/database-config",
-	},
-	{
-		icon: <KeyIcon className={ICON_CLASSES} />,
-		text: "API Keys",
-		link: "/api-keys",
+		icon: <SettingsIcon className={ICON_CLASSES} />,
+		text: "Settings",
+		link: "/settings",
 	},
 ];
 

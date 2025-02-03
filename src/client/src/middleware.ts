@@ -69,12 +69,11 @@ export const config = {
 		"/getting-started",
 		"/dashboard",
 		"/requests",
-		"/database-config",
 		"/openground",
 		"/exceptions",
 		"/prompt-hub",
 		"/vault",
-		"/api-keys",
+		"/settings",
 		"/telemetry-enabled",
 	],
 };

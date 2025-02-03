@@ -12,6 +12,7 @@ export default async function CreateEvaluationMigration(
           id UUID DEFAULT generateUUIDv4(),  -- Unique ID for each evaluation
           span_id String,
           created_at DateTime DEFAULT now(),
+          meta Map(LowCardinality(String), String),
 
           -- Fixed metadata structure
           evaluationData Nested(

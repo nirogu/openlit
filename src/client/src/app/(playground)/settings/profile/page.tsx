@@ -155,7 +155,7 @@ export default function Profile() {
 	};
 
 	return (
-		<div className="flex flex-1 h-full w-full relative">
+		<div className="flex flex-1 h-full w-full relative py-4  px-6 ">
 			<ModifyProfileDetails user={userDetails as User} fetchUser={fetchUser} />
 		</div>
 	);

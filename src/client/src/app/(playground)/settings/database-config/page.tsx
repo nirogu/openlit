@@ -5,7 +5,7 @@ import FormBuilder, {
 } from "@/components/common/form-builder";
 import DatabaseConfigTabs, {
 	DatabaseConfigTabItemProps,
-} from "@/app/(playground)/database-config/database-config-tabs";
+} from "@/app/(playground)/settings/database-config/database-config-tabs";
 import { Button } from "@/components/ui/button";
 import { DatabaseConfig, DatabaseConfigWithActive } from "@/constants/dbConfig";
 import {
@@ -283,7 +283,7 @@ function DatabaseList({
 	}));
 
 	return (
-		<div className="flex flex-col w-full flex-1 h-full relative gap-4">
+		<div className="flex w-full flex-1 relative">
 			<DatabaseConfigTabs
 				addButton
 				items={items}
@@ -292,7 +292,7 @@ function DatabaseList({
 				onClickItemChangeActive={onClickSetCurrent}
 				onClickItemDelete={onClickDelete}
 			/>
-			<div className="flex flex-1 w-full h-full overflow-hidden">
+			<div className="flex flex-1 w-full h-full overflow-hidden py-4 px-6">
 				{selectedDBConfigId ? (
 					<ModifyDatabaseConfig dbConfig={dbConfigByKey[selectedDBConfigId]} />
 				) : (
@@ -333,7 +333,7 @@ export default function Database() {
 	const databaseListIsLoading = useRootStore(getDatabaseConfigListIsLoading);
 
 	return isNil(databaseList) ? (
-		<div className="flex items-center justify-center w-full h-full bg-white dark:bg-stone-950 animate-pulse dark:text-white">
+		<div className="flex items-center justify-center w-full h-full animate-pulse dark:text-white">
 			Loading...
 		</div>
 	) : (
