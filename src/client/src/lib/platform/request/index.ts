@@ -1,10 +1,13 @@
 import { MetricParams, dataCollector, OTEL_TRACES_TABLE_NAME } from "../common";
-import { buildHierarchy, getTraceMappingKeyFullPath } from "@/helpers/trace";
+import {
+	getTraceMappingKeyFullPath,
+	buildHierarchy,
+} from "@/helpers/server/trace";
 import {
 	dateTruncGroupingLogic,
 	getFilterPreviousParams,
 	getFilterWhereCondition,
-} from "@/helpers/platform";
+} from "@/helpers/server/platform";
 
 export async function getRequestPerTime(params: MetricParams) {
 	const { start, end } = params.timeLimit;

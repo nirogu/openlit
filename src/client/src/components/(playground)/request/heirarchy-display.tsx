@@ -5,10 +5,11 @@ import { TangentIcon } from "lucide-react";
 import {
 	findSpanInHierarchyLodash,
 	getNormalizedTraceAttribute,
-} from "@/helpers/trace";
-import { TraceHeirarchySpan, TraceMapping } from "@/constants/traces";
+} from "@/helpers/client/trace";
+import { TraceHeirarchySpan } from "@/types/trace";
 import useFetchWrapper from "@/utils/hooks/useFetchWrapper";
 import { toast } from "sonner";
+import { TraceMapping } from "@/constants/traces";
 
 interface TreeNodeProps {
 	span: TraceHeirarchySpan;

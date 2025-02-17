@@ -1,12 +1,13 @@
-import { ValueOf } from "../utils/types";
-import { MetricParams, OPERATION_TYPE } from "@/lib/platform/common";
+import { ValueOf } from "../../types/util";
+import { MetricParams } from "@/lib/platform/common";
 import {
 	addDays,
 	addMonths,
 	differenceInDays,
 	differenceInYears,
 } from "date-fns";
-import { getTraceMappingKeyFullPath } from "./trace";
+import { getTraceMappingKeyFullPath } from "../server/trace";
+import { FilterWhereConditionType } from "@/types/platform";
 
 export const validateMetricsRequestType = {
 	// Request
@@ -159,26 +160,6 @@ export const validateMetricsRequest = (
 	}
 
 	return { success: true };
-};
-
-type FilterWhereConditionType = {
-	timeLimit: {
-		start: Date | string;
-		end: Date | string;
-		type: string;
-	};
-	offset?: number;
-	limit?: number;
-	selectedConfig?: Partial<{
-		providers: string[];
-		maxCost: number;
-		models: string[];
-		traceTypes: string[];
-	}>;
-	notOrEmpty?: { key: string }[];
-	notEmpty?: { key: string }[];
-	statusCode?: string[];
-	operationType?: OPERATION_TYPE;
 };
 
 export const getFilterWhereCondition = (

@@ -1,137 +1,219 @@
 "use client";
 
+import SecretForm from "@/components/(playground)/vault/form";
 import FormBuilder, {
 	FormBuilderEvent,
 } from "@/components/common/form-builder";
+import { Button } from "@/components/ui/button";
+import { SUPPORTED_MODELS, SUPPORTED_PROVIDERS } from "@/constants/evaluation";
 import { CLIENT_EVENTS } from "@/constants/events";
-import { getUserDetails, setUser } from "@/selectors/user";
-import { useRootStore } from "@/store";
+import getMessage from "@/constants/messages";
 import useFetchWrapper from "@/utils/hooks/useFetchWrapper";
 import { usePostHog } from "posthog-js/react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 
-const PROFILE_TOAST_ID = "profile-details";
+const EvaluationVaultCreate = ({
+	successCallback,
+}: {
+	successCallback: () => void;
+}) => {
+	return (
+		<div className="flex items-center w-full h-full gap-2 text-stone-400 dark:text-stone-500 ml-3">
+			Unable to find the vault key.
+			<SecretForm successCallback={successCallback}>
+				<Button variant="ghost" className="py-0 text-link h-auto px-0 text-xs">
+					Create new!
+				</Button>
+			</SecretForm>
+		</div>
+	);
+};
+
+const EVALUATION_TOAST_ID = "evaluation-config";
 
 function ModifyEvaluationSettings({
 	evaluation,
+	onSuccess,
 }: {
-	evaluation: any
+	evaluation: any;
+	onSuccess: () => void;
 }) {
+	const [provider, setProvider] = useState(evaluation?.provider || "");
+	const [vaultKeys, setVaultKeys] = useState([]);
 	const posthog = usePostHog();
-	const { fireRequest, isLoading } = useFetchWrapper();
+	const { fireRequest, isLoading: isLoadingModify } = useFetchWrapper();
+	const { fireRequest: getVaultKeys, isLoading: isLoadingVaultKeys, isFetched: isFet } =
+		useFetchWrapper();
 
 	const modifyDetails: FormBuilderEvent = (event) => {
 		event.preventDefault();
 		const formElement = event.target as HTMLFormElement;
 
 		const bodyObject = {
-			currentPassword: (formElement.currentPassword as any)?.value,
-			newPassword: (formElement.newPassword as any)?.value,
-			name: (formElement.name as any)?.value,
+			...(evaluation || {}),
+			provider: (formElement.provider as any)?.value,
+			model: (formElement.model as any)?.value,
+			vaultId: (formElement.vaultId as any)?.value,
 		};
 
-		if (
-			bodyObject.newPassword !== (formElement.confirmNewPassword as any)?.value
-		) {
-			toast.loading("New password and Confirm new password does not match...", {
-				id: PROFILE_TOAST_ID,
+		if (!bodyObject.provider || !bodyObject.model || !bodyObject.vaultId) {
+			toast.error(getMessage().EVALUATION_CONFIG_INVALID, {
+				id: EVALUATION_TOAST_ID,
 			});
 			return;
 		}
-
-		toast.loading("Modifying profile details...", {
-			id: PROFILE_TOAST_ID,
+		toast.loading(getMessage().EVALUATION_CONFIG_MODIFYING, {
+			id: EVALUATION_TOAST_ID,
 		});
 
 		fireRequest({
 			body: JSON.stringify(bodyObject),
 			requestType: "POST",
-			url: "/api/user/profile",
+			url: "/api/evaluation/config",
 			responseDataKey: "data",
 			successCb: () => {
-				toast.success("Profile details updated!", {
-					id: PROFILE_TOAST_ID,
-				});
+				toast.success(
+					evaluation?.id
+						? getMessage().EVALUATION_UPDATED
+						: getMessage().EVALUATION_CREATED,
+					{
+						id: EVALUATION_TOAST_ID,
+					}
+				);
 				formElement.reset();
-				posthog?.capture(CLIENT_EVENTS.PROFILE_UPDATE_SUCCESS);
+				onSuccess();
+				posthog?.capture(
+					evaluation?.id
+						? CLIENT_EVENTS.EVALUATION_CONFIG_UPDATED
+						: CLIENT_EVENTS.EVALUATION_CONFIG_CREATED
+				);
 			},
 			failureCb: (err?: string) => {
-				toast.error(err || "Profile details updation failed!", {
-					id: PROFILE_TOAST_ID,
+				toast.error(err || getMessage().EVALUATION_CONFIG_UPDATING_FAILED, {
+					id: EVALUATION_TOAST_ID,
 				});
-				posthog?.capture(CLIENT_EVENTS.PROFILE_UPDATE_FAILURE);
+				posthog?.capture(
+					evaluation?.id
+						? CLIENT_EVENTS.EVALUATION_CONFIG_UPDATED_FAILURE
+						: CLIENT_EVENTS.EVALUATION_CONFIG_CREATED_FAILURE
+				);
 			},
 		});
 	};
+
+	const fetchVaultKeys = () => {
+		getVaultKeys({
+			requestType: "POST",
+			url: "/api/vault/get",
+			responseDataKey: "data",
+			body: JSON.stringify({}),
+			successCb: (res) => {
+				setVaultKeys(
+					res?.length
+						? res.map((key: any) => ({ label: key.key, value: key.id }))
+						: []
+				);
+			},
+		});
+	};
+
+	useEffect(() => {
+		fetchVaultKeys();
+	}, []);
+
+	const providerOptions = useMemo(() => {
+		return SUPPORTED_PROVIDERS.map((provider) => {
+			return {
+				label: provider,
+				value: provider,
+			};
+		});
+	}, []);
+	const modelOptions = useMemo(() => {
+		return (
+			SUPPORTED_MODELS[provider as keyof typeof SUPPORTED_MODELS] || []
+		).map((model: string) => {
+			return {
+				label: model,
+				value: model,
+			};
+		});
+	}, [provider]);
 
 	return (
 		<FormBuilder
 			fields={[
 				{
-					label: "LLM Provider",
+					label: "Model Provider",
 					inputKey: `${evaluation?.id}-provider`,
-					fieldType: "INPUT",
+					fieldType: "SELECT",
 					fieldTypeProps: {
-						type: "text",
-						name: "email",
-						placeholder: "e.g.",
-						defaultValue: evaluation?.provider || ""
+						name: "provider",
+						placeholder: "Select provider",
+						defaultValue: provider || "",
+						options: providerOptions,
+						onChange: (value: string) => {
+							setProvider(value);
+						},
 					},
 				},
 				{
 					label: "Model",
 					inputKey: `${evaluation?.id}-model`,
-					fieldType: "INPUT",
+					fieldType: "SELECT",
 					fieldTypeProps: {
-						type: "text",
-						name: "name",
-						placeholder: "e.g. gpt-4",
+						name: "model",
+						placeholder: provider ? "Select model" : "Select provider first",
 						defaultValue: evaluation?.model || "",
+						options: modelOptions,
 					},
 				},
 				{
-					label: "LLM API Key",
-					fieldType: "INPUT",
-					inputKey: `${evaluation?.id}-apiKey`,
+					label: "Provider API Key",
+					fieldType: "SELECT",
+					inputKey: `${evaluation?.id}-vaultId`,
 					fieldTypeProps: {
-						type: "password",
-						name: "apiKey",
-						placeholder: "*******",
+						name: "vaultId",
+						placeholder: "Select vault key",
+						options: vaultKeys,
+						defaultValue: evaluation?.vaultId || "",
 					},
+					description: (
+						<EvaluationVaultCreate successCallback={fetchVaultKeys} />
+					),
 				},
 			]}
-			heading={`Update evaluation settings`}
-			isLoading={isLoading}
+			heading={`${evaluation?.id ? "Update" : "Create"} evaluation settings`}
+			isLoading={isLoadingModify || isLoadingVaultKeys}
 			onSubmit={modifyDetails}
-			submitButtonText={"Update"}
+			submitButtonText={evaluation?.id ? "Update" : "Create"}
 		/>
 	);
 }
 
 export default function Evaluation() {
-	const userDetails = useRootStore(getUserDetails);
-	const setUserDetails = useRootStore(setUser);
-	const { fireRequest: getUser } = useFetchWrapper();
+	const {
+		fireRequest: getEvaluationConfig,
+		data,
+		isLoading,
+	} = useFetchWrapper();
 
-	const fetchUser = () => {
-		getUser({
+	const fetchEvaluationConfig = () => {
+		getEvaluationConfig({
 			requestType: "GET",
-			url: "/api/user/profile",
+			url: "/api/evaluation/config",
 			responseDataKey: "data",
-			successCb(res) {
-				setUserDetails(res);
-			},
-			failureCb: (err?: string) => {
-				toast.error(err || "Unauthorized access!", {
-					id: PROFILE_TOAST_ID,
-				});
-			},
 		});
 	};
 
+	useEffect(() => {
+		fetchEvaluationConfig();
+	}, []);
+
 	return (
 		<div className="flex flex-1 h-full w-full relative py-4  px-6 ">
-			<ModifyEvaluationSettings evaluation={{}} />
+			{!isLoading && <ModifyEvaluationSettings evaluation={data} onSuccess={fetchEvaluationConfig} />}
 		</div>
 	);
 }

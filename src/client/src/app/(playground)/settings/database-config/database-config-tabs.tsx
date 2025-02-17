@@ -45,7 +45,7 @@ export default function DatabaseConfigTabs({
 	addButton,
 }: DatabaseConfigTabsProps) {
 	return (
-		<div className="flex flex-col overflow-hidden border-r border-stone-100 dark:border-stone-700">
+		<div className="flex flex-col overflow-hidden border-r dark:border-stone-800">
 			{addButton && (
 				<>
 					<div
@@ -57,7 +57,7 @@ export default function DatabaseConfigTabs({
 					>
 						Add new
 					</div>
-					<hr className="border-stone-100 dark:border-stone-700" />
+					<hr className="dark:border-stone-800" />
 				</>
 			)}
 			<div className="flex flex-col overflow-y-auto">
@@ -119,7 +119,7 @@ export default function DatabaseConfigTabs({
 								</div>
 							</div>
 						</div>
-						<hr className="border-stone-100 dark:border-stone-700" />
+						<hr className="dark:border-stone-800" />
 					</Fragment>
 				))}
 			</div>

@@ -1,5 +1,5 @@
 "use client";
-import { pingActiveDatabaseConfig } from "@/helpers/database-config";
+import { pingActiveDatabaseConfig } from "@/helpers/client/database-config";
 import { getPingDetails } from "@/selectors/database-config";
 import { useRootStore } from "@/store";
 import Image from "next/image";

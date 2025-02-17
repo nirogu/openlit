@@ -1,8 +1,12 @@
-export interface SecretInput {
-	id?: string;
+export interface Secret {
+	id: string;
 	key: string;
 	value: string;
 	tags: string[];
+}
+
+export interface SecretInput extends Omit<Secret, "id"> {
+	id?: string;
 }
 
 export interface SecretGetFilters {

@@ -1,6 +1,7 @@
 import {
 	Fragment,
 	KeyboardEvent,
+	ReactNode,
 	useCallback,
 	useEffect,
 	useRef,
@@ -12,13 +13,15 @@ import { Textarea, TextareaProps } from "@/components/ui/textarea";
 import { PlusIcon, XIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { CustomSelect, CustomSelectProps } from "@/components/ui/custom-select";
 
 export type FieldTypes =
 	| "INPUT"
 	| "TEXTAREA"
 	| "TAGSINPUT"
 	| "KEYVALUE"
-	| "RADIOGROUP";
+	| "RADIOGROUP"
+	| "SELECT";
 interface RadioGroupProps {
 	name: string;
 	options: {
@@ -45,11 +48,12 @@ export type FieldTypeProps =
 	| InputProps
 	| TextareaProps
 	| RadioGroupProps
-	| KeyValuePairProps;
+	| KeyValuePairProps
+	| CustomSelectProps;
 
 export type FieldProps = {
 	label: string;
-	description?: string;
+	description?: string | ReactNode;
 	fieldType: FieldTypes;
 	fieldTypeProps: FieldTypeProps;
 	inputKey?: string;
@@ -76,8 +80,10 @@ function FormTagsInputField(props: FieldProps) {
 	);
 
 	const onKeyDownHandler = (e: KeyboardEvent<HTMLInputElement>) => {
-		typeof props.fieldTypeProps.onKeyUp === "function" &&
-			props.fieldTypeProps.onKeyUp(e as any);
+		const inputProps = props.fieldTypeProps as InputProps;
+		if (typeof inputProps?.onKeyUp === "function") {
+			inputProps.onKeyUp(e);
+		}
 		if (e.key === "Enter") {
 			e.preventDefault();
 			addTag(e);
@@ -96,7 +102,7 @@ function FormTagsInputField(props: FieldProps) {
 				onKeyDown={onKeyDownHandler}
 			/>
 			<div className="flex flex-wrap gap-2 mb-2">
-				{tags.map((tag, index) => (
+				{tags.map((tag) => (
 					<Fragment key={tag}>
 						<Input
 							className="ph-no-capture"
@@ -280,6 +286,15 @@ function FormTextareaField(props: FieldProps) {
 	);
 }
 
+function FormSelectField(props: FieldProps) {
+	return (
+		<CustomSelect
+			key={props.inputKey || `${name}-${props.fieldTypeProps.defaultValue}`}
+			{...(props.fieldTypeProps as CustomSelectProps)}
+		/>
+	);
+}
+
 export default function FormField(
 	props: FieldProps & {
 		boundaryClass?: string;
@@ -300,6 +315,8 @@ export default function FormField(
 				<FormKeyValueField {...props} />
 			) : props.fieldType === "RADIOGROUP" ? (
 				<FormRadioGroupField {...props} />
+			) : props.fieldType === "SELECT" ? (
+				<FormSelectField {...props} />
 			) : null}
 			{props.description ? (
 				<span className="text-xs text-stone-400 -mt-[5px]">

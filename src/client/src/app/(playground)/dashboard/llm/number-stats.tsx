@@ -1,6 +1,6 @@
 import StatCard from "@/components/(playground)/stat-card";
 import { TraceMapping } from "@/constants/traces";
-import { integerParser } from "@/helpers/trace";
+import { integerParser } from "@/helpers/client/trace";
 import {
 	Banknote,
 	Braces,

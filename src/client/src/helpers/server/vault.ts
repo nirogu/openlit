@@ -1,4 +1,4 @@
-import { SecretInput } from "@/constants/vault";
+import { SecretInput } from "@/types/vault";
 
 export function verifySecretInput(secretInput: SecretInput) {
 	if (secretInput.key.length === 0) {

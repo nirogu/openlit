@@ -12,7 +12,7 @@ import {
 	changeActiveDatabaseConfig,
 	deleteDatabaseConfig,
 	fetchDatabaseConfigList,
-} from "@/helpers/database-config";
+} from "@/helpers/client/database-config";
 import {
 	getDatabaseConfigList,
 	getDatabaseConfigListIsLoading,
