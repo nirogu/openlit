@@ -1,6 +1,6 @@
 {
   "name": "openlit",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "homepage": "https://github.com/openlit/openlit#readme",
   "bugs": {
     "url": "https://github.com/openlit/openlit/issues",
@@ -11,8 +11,7 @@
     "url": "https://github.com/openlit/openlit"
   },
   "scripts": {
-    "build": "tsc --build",
-    "postinstall": "npm run build"
+    "build": "tsc --build"
   },
   "files": [
     "dist",
