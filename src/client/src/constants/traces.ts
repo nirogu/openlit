@@ -467,3 +467,5 @@ export const SPAN_KIND: Record<SPAN_KIND_TYPE, SPAN_KIND_TYPE> = {
 	SPAN_KIND_INTERNAL: "SPAN_KIND_INTERNAL", // Defines exceptions
 	SPAN_KIND_CLIENT: "SPAN_KIND_CLIENT", // Define successful queries
 };
+
+export const SUPPORTED_EVALUATION_OPERATIONS = ["chat"];

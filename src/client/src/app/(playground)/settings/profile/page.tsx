@@ -1,8 +1,7 @@
 "use client";
 
-import FormBuilder, {
-	FormBuilderEvent,
-} from "@/components/common/form-builder";
+import FormBuilder from "@/components/common/form-builder";
+import { FormBuilderEvent } from "@/types/form";
 import { CLIENT_EVENTS } from "@/constants/events";
 import { getUserDetails, setUser } from "@/selectors/user";
 import { useRootStore } from "@/store";

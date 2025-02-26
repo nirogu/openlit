@@ -1,5 +1,4 @@
-import { Fragment, MouseEventHandler } from "react";
-import { Card } from "@/components/ui/card";
+import { Fragment } from "react";
 import { Badge } from "@/components/ui/badge";
 import {
 	Tooltip,
@@ -9,25 +8,7 @@ import {
 import { Trash2 } from "lucide-react";
 import ShareDialog from "./share-dialog";
 import { Checkbox } from "@/components/ui/checkbox";
-
-export type DatabaseConfigTabItemProps = {
-	id: string;
-	name: string;
-	badge?: string;
-	isCurrent?: boolean;
-	canDelete?: boolean;
-	canShare?: boolean;
-	canEdit?: boolean;
-};
-
-export type DatabaseConfigTabsProps = {
-	items: DatabaseConfigTabItemProps[];
-	onClickTab: MouseEventHandler<HTMLElement>;
-	selectedTabId: string;
-	onClickItemDelete?: MouseEventHandler<SVGSVGElement>;
-	onClickItemChangeActive: MouseEventHandler<HTMLDivElement>;
-	addButton?: boolean;
-};
+import { DatabaseConfigTabsProps } from "@/types/database-config";
 
 const ADD_NEW_ID = "ADD_NEW_ID";
 

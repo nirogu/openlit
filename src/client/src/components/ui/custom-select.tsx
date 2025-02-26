@@ -19,20 +19,7 @@ import {
 	PopoverTrigger,
 } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
-
-interface Option {
-	value: string;
-	label: string;
-}
-
-export interface CustomSelectProps {
-	options: Option[];
-	defaultValue?: string;
-	onChange: (value: string) => void;
-	placeholder?: string;
-	hasOtherOption?: boolean;
-	name: string;
-}
+import { CustomSelectProps } from "@/types/form";
 
 export function CustomSelect({
 	options,

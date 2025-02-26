@@ -40,5 +40,15 @@ export const EVALUATION_CREATED = "Evaluation created successfully!";
 export const EVALUATION_UPDATED = "Evaluation updated successfully!";
 export const EVALUATION_CONFIG_MODIFYING = "Modifying evaluation config...";
 export const EVALUATION_CONFIG_INVALID = "Invalid evaluation config!";
-export const EVALUATION_CONFIG_UPDATING_FAILED = "Evaluation config updation failed!";
+export const EVALUATION_CONFIG_UPDATING_FAILED =
+	"Evaluation config updation failed!";
 export const EVALUATION_RUN_FAILURE = "Evaluation run failed!";
+
+// Traces
+export const TRACE_NOT_FOUND = "Trace not found!";
+export const TRACE_FETCHING_ERROR = "Error fetching trace!";
+
+// Cron
+export const CRON_RECURRING_TIME_INVALID =
+	"Invalid cron schedule. Please check the format.";
+export const CRON_JOB_UPDATION_ERROR = "Error updating cron job.";

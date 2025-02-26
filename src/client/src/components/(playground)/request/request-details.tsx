@@ -118,8 +118,8 @@ export default function RequestDetails() {
 				displayOverlay={false}
 				displayClose={false}
 			>
-				<SheetHeader className="flex-row bg-stone-950 px-4 py-3 items-center space-y-0">
-					<SheetTitle className="text-stone-200 text-2xl font-bold leading-7 capitalize grow pr-3">
+				<SheetHeader className="flex-row bg-stone-950 px-3 py-2 items-center space-y-0">
+					<SheetTitle className="text-stone-200 text-md font-bold leading-7 capitalize grow pr-3">
 						{isFetchingData || !normalizedItem
 							? "..."
 							: normalizedItem.spanName}

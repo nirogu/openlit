@@ -1,11 +1,7 @@
 "use client";
 
-import FormBuilder, {
-	FormBuilderEvent,
-} from "@/components/common/form-builder";
-import DatabaseConfigTabs, {
-	DatabaseConfigTabItemProps,
-} from "@/app/(playground)/settings/database-config/database-config-tabs";
+import FormBuilder from "@/components/common/form-builder";
+import DatabaseConfigTabs from "@/app/(playground)/settings/database-config/database-config-tabs";
 import { Button } from "@/components/ui/button";
 import { DatabaseConfig, DatabaseConfigWithActive } from "@/constants/dbConfig";
 import {
@@ -24,6 +20,8 @@ import { MouseEventHandler, useCallback, useState } from "react";
 import { toast } from "sonner";
 import { usePostHog } from "posthog-js/react";
 import { CLIENT_EVENTS } from "@/constants/events";
+import { DatabaseConfigTabItemProps } from "@/types/database-config";
+import { FormBuilderEvent } from "@/types/form";
 
 function ModifyDatabaseConfig({
 	dbConfig,

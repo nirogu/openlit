@@ -1,13 +1,13 @@
 "use client";
 
 import SecretForm from "@/components/(playground)/vault/form";
-import FormBuilder, {
-	FormBuilderEvent,
-} from "@/components/common/form-builder";
+import FormBuilder from "@/components/common/form-builder";
+import { FormBuilderEvent } from "@/types/form";
 import { Button } from "@/components/ui/button";
 import { SUPPORTED_MODELS, SUPPORTED_PROVIDERS } from "@/constants/evaluation";
 import { CLIENT_EVENTS } from "@/constants/events";
 import getMessage from "@/constants/messages";
+import { EvaluationConfig } from "@/types/evaluation";
 import useFetchWrapper from "@/utils/hooks/useFetchWrapper";
 import { usePostHog } from "posthog-js/react";
 import { useEffect, useMemo, useState } from "react";
@@ -19,7 +19,7 @@ const EvaluationVaultCreate = ({
 	successCallback: () => void;
 }) => {
 	return (
-		<div className="flex items-center w-full h-full gap-2 text-stone-400 dark:text-stone-500 ml-3">
+		<div className="flex flex-wrap items-center gap-1 w-full h-full text-stone-400 dark:text-stone-500 ml-3">
 			Unable to find the vault key.
 			<SecretForm successCallback={successCallback}>
 				<Button variant="ghost" className="py-0 text-link h-auto px-0 text-xs">
@@ -36,14 +36,18 @@ function ModifyEvaluationSettings({
 	evaluation,
 	onSuccess,
 }: {
-	evaluation: any;
+	evaluation: EvaluationConfig | null;
 	onSuccess: () => void;
 }) {
 	const [provider, setProvider] = useState(evaluation?.provider || "");
+	const [autoEvaluation, setAutoEvaluation] = useState<boolean>(
+		evaluation?.auto || false
+	);
+	const [model, setModel] = useState(evaluation?.model || "");
 	const [vaultKeys, setVaultKeys] = useState([]);
 	const posthog = usePostHog();
 	const { fireRequest, isLoading: isLoadingModify } = useFetchWrapper();
-	const { fireRequest: getVaultKeys, isLoading: isLoadingVaultKeys, isFetched: isFet } =
+	const { fireRequest: getVaultKeys, isLoading: isLoadingVaultKeys } =
 		useFetchWrapper();
 
 	const modifyDetails: FormBuilderEvent = (event) => {
@@ -55,6 +59,8 @@ function ModifyEvaluationSettings({
 			provider: (formElement.provider as any)?.value,
 			model: (formElement.model as any)?.value,
 			vaultId: (formElement.vaultId as any)?.value,
+			auto: (formElement.auto as any)?.checked,
+			recurringTime: (formElement.recurringTime as any)?.value,
 		};
 
 		if (!bodyObject.provider || !bodyObject.model || !bodyObject.vaultId) {
@@ -85,8 +91,8 @@ function ModifyEvaluationSettings({
 				onSuccess();
 				posthog?.capture(
 					evaluation?.id
-						? CLIENT_EVENTS.EVALUATION_CONFIG_UPDATED
-						: CLIENT_EVENTS.EVALUATION_CONFIG_CREATED
+						? CLIENT_EVENTS.EVALUATION_CONFIG_UPDATED_SUCCESS
+						: CLIENT_EVENTS.EVALUATION_CONFIG_CREATED_SUCCESS
 				);
 			},
 			failureCb: (err?: string) => {
@@ -155,6 +161,7 @@ function ModifyEvaluationSettings({
 						options: providerOptions,
 						onChange: (value: string) => {
 							setProvider(value);
+							setModel("");
 						},
 					},
 				},
@@ -165,7 +172,10 @@ function ModifyEvaluationSettings({
 					fieldTypeProps: {
 						name: "model",
 						placeholder: provider ? "Select model" : "Select provider first",
-						defaultValue: evaluation?.model || "",
+						defaultValue: model || "",
+						onChange: (value: string) => {
+							setModel(value);
+						},
 						options: modelOptions,
 					},
 				},
@@ -183,6 +193,30 @@ function ModifyEvaluationSettings({
 						<EvaluationVaultCreate successCallback={fetchVaultKeys} />
 					),
 				},
+				{
+					label: "Auto Evaluation",
+					fieldType: "SWITCH",
+					inputKey: `${evaluation?.id}-auto`,
+					fieldTypeProps: {
+						name: "auto",
+						defaultChecked: evaluation?.auto || false,
+						onCheckedChange: (value: boolean) => {
+							setAutoEvaluation(value);
+						},
+					},
+				},
+				{
+					label: "Recurring Time",
+					inputKey: `${evaluation?.id}-recurringTime`,
+					fieldType: "INPUT",
+					fieldTypeProps: {
+						type: "text",
+						name: "recurringTime",
+						placeholder: "* * * * *",
+						defaultValue: evaluation?.recurringTime || "",
+						disabled: !autoEvaluation,
+					},
+				},
 			]}
 			heading={`${evaluation?.id ? "Update" : "Create"} evaluation settings`}
 			isLoading={isLoadingModify || isLoadingVaultKeys}
@@ -197,7 +231,7 @@ export default function Evaluation() {
 		fireRequest: getEvaluationConfig,
 		data,
 		isLoading,
-	} = useFetchWrapper();
+	} = useFetchWrapper<EvaluationConfig>();
 
 	const fetchEvaluationConfig = () => {
 		getEvaluationConfig({
@@ -213,7 +247,12 @@ export default function Evaluation() {
 
 	return (
 		<div className="flex flex-1 h-full w-full relative py-4  px-6 ">
-			{!isLoading && <ModifyEvaluationSettings evaluation={data} onSuccess={fetchEvaluationConfig} />}
+			{!isLoading && (
+				<ModifyEvaluationSettings
+					evaluation={data}
+					onSuccess={fetchEvaluationConfig}
+				/>
+			)}
 		</div>
 	);
 }

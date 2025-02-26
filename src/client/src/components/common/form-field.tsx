@@ -1,7 +1,6 @@
 import {
 	Fragment,
 	KeyboardEvent,
-	ReactNode,
 	useCallback,
 	useEffect,
 	useRef,
@@ -13,51 +12,9 @@ import { Textarea, TextareaProps } from "@/components/ui/textarea";
 import { PlusIcon, XIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { CustomSelect, CustomSelectProps } from "@/components/ui/custom-select";
-
-export type FieldTypes =
-	| "INPUT"
-	| "TEXTAREA"
-	| "TAGSINPUT"
-	| "KEYVALUE"
-	| "RADIOGROUP"
-	| "SELECT";
-interface RadioGroupProps {
-	name: string;
-	options: {
-		title: string;
-		subText: string;
-		description?: string;
-		value: string;
-	}[];
-	defaultValue?: string;
-	placeholder?: string;
-	onKeyUp?: any;
-	onChange?: any;
-}
-
-interface KeyValuePairProps {
-	name: string;
-	defaultValue?: { key: string; value: any }[];
-	placeholder?: string;
-	onKeyUp?: any;
-	onChange?: any;
-}
-
-export type FieldTypeProps =
-	| InputProps
-	| TextareaProps
-	| RadioGroupProps
-	| KeyValuePairProps
-	| CustomSelectProps;
-
-export type FieldProps = {
-	label: string;
-	description?: string | ReactNode;
-	fieldType: FieldTypes;
-	fieldTypeProps: FieldTypeProps;
-	inputKey?: string;
-};
+import { CustomSelect } from "@/components/ui/custom-select";
+import { CustomSelectProps, FieldProps, KeyValuePairProps, RadioGroupProps } from "@/types/form";
+import { Switch, SwitchProps } from "@/components/ui/switch";
 
 function FormTagsInputField(props: FieldProps) {
 	const [tags, setTags] = useState<string[]>(
@@ -98,7 +55,7 @@ function FormTagsInputField(props: FieldProps) {
 					props.inputKey ||
 					`${props.fieldTypeProps.name}-${props.fieldTypeProps.defaultValue}`
 				}
-				placeholder={props.fieldTypeProps.placeholder}
+				placeholder={(props.fieldTypeProps as InputProps).placeholder}
 				onKeyDown={onKeyDownHandler}
 			/>
 			<div className="flex flex-wrap gap-2 mb-2">
@@ -150,7 +107,7 @@ function FormKeyValueField(props: FieldProps) {
 		}
 	};
 
-	const { name = "keyValue", placeholder = "" } = props.fieldTypeProps;
+	const { name = "keyValue", placeholder = "" } = props.fieldTypeProps as KeyValuePairProps;
 
 	return (
 		<div className="grid grid-col-1 w-100 gap-4">
@@ -295,6 +252,10 @@ function FormSelectField(props: FieldProps) {
 	);
 }
 
+function FormSwitchField(props: FieldProps) {
+	return <Switch {...(props.fieldTypeProps as SwitchProps)} />;
+}
+
 export default function FormField(
 	props: FieldProps & {
 		boundaryClass?: string;
@@ -317,6 +278,8 @@ export default function FormField(
 				<FormRadioGroupField {...props} />
 			) : props.fieldType === "SELECT" ? (
 				<FormSelectField {...props} />
+			) : props.fieldType === "SWITCH" ? (
+				<FormSwitchField {...props} />
 			) : null}
 			{props.description ? (
 				<span className="text-xs text-stone-400 -mt-[5px]">

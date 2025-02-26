@@ -35,11 +35,6 @@ const validateEmail = (email: string) => {
 		);
 };
 
-type ShareArray = {
-	email: string;
-	permissions: { canDelete: boolean; canEdit: boolean; canShare: boolean };
-}[];
-
 export default function ShareDialog({
 	id,
 	permissions,
@@ -47,7 +42,12 @@ export default function ShareDialog({
 	id: string;
 	permissions: DatabaseConfigPermissions;
 }) {
-	const [shareArray, setShareArray] = useState<ShareArray>([]);
+	const [shareArray, setShareArray] = useState<
+		{
+			email: string;
+			permissions: { canDelete: boolean; canEdit: boolean; canShare: boolean };
+		}[]
+	>([]);
 	const { fireRequest, isLoading } = useFetchWrapper();
 
 	const emailRef = useRef<HTMLInputElement>(null);

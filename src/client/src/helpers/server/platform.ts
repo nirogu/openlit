@@ -57,6 +57,8 @@ export const validateMetricsRequestType = {
 	GENERATION_BY_ENVIRONMENT: "GENERATION_BY_ENVIRONMENT",
 	// application
 	GENERATION_BY_APPLICATION: "GENERATION_BY_APPLICATION",
+	// evaluation
+	GET_TOTAL_EVALUATION_DETECTED: "GET_TOTAL_EVALUATION_DETECTED",
 };
 
 export const validateMetricsRequest = (
@@ -101,6 +103,9 @@ export const validateMetricsRequest = (
 		case validateMetricsRequestType.GENERATION_BY_SYSTEM:
 		case validateMetricsRequestType.GENERATION_BY_ENVIRONMENT:
 		case validateMetricsRequestType.GENERATION_BY_APPLICATION:
+
+		// Evaluation
+		case validateMetricsRequestType.GET_TOTAL_EVALUATION_DETECTED:
 			if (!params.timeLimit?.start || !params.timeLimit?.end) {
 				return {
 					success: false,

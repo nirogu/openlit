@@ -1,4 +1,4 @@
-import { TraceMapping } from "@/constants/traces";
+import { SUPPORTED_EVALUATION_OPERATIONS, TraceMapping } from "@/constants/traces";
 import {
 	TraceMappingKeyType,
 	TransformedTraceRow,
@@ -144,14 +144,8 @@ export function findSpanInHierarchyLodash(
 export function getExtraTabsContentTypes(trace: TransformedTraceRow) {
 	const defaultTabs = [];
 
-	defaultTabs.push("Evaluation");
-
-	switch (trace.type) {
-		case "chat":
-			defaultTabs.push("Evaluation");
-			break;
-		default:
-			break;
+	if (SUPPORTED_EVALUATION_OPERATIONS.includes(trace.type)) {
+		defaultTabs.push("Evaluation");
 	}
 
 	return defaultTabs;
